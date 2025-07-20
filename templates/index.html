@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Multi-Modelo AI – Comparador Inteligente</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { font-family: sans-serif; margin: 20px; max-width: 1000px; }
+        textarea, select, button { padding: 10px; margin-top: 10px; width: 100%; font-size: 1em; }
+        .respuesta { margin-top: 20px; padding: 15px; background: #f4f4f4; border-radius: 8px; white-space: pre-wrap; }
+        .respuesta h3 { margin-top: 0; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🤖 Multi-Modelo AI – Comparador de Respuestas</h1>
+    <textarea id="pregunta" rows="4" placeholder="Escribí tu consulta..."></textarea>
+
+    <label for="modelos">Modelos a usar:</label>
+    <select id="modelos" multiple size="6">
+        <option value="gpt-4o">OpenAI – GPT-4o</option>
+        <option value="openrouter:anthropic/claude-3-sonnet">Claude 3 Sonnet</option>
+        <option value="openrouter:google/gemini-2.5-pro">Gemini 2.5 Pro</option>
+        <option value="openrouter:deepseek/deepseek-chat">DeepSeek</option>
+        <option value="openrouter:xai/grok-1">Grok (xAI)</option>
+        <option value="openrouter:mistralai/mistral-7b-instruct">Mistral</option>
+    </select>
+
+    <button onclick="consultarModelos()">Comparar Respuestas</button>
+
+    <div class="grid" id="resultados"></div>
+
+    <script>
+        function limpiarRespuesta(respuesta) {
+            if (typeof respuesta === "string") return respuesta;
+            if (respuesta?.text && typeof respuesta.text === "string") return respuesta.text;
+            if (respuesta?.message?.content && typeof respuesta.message.content === "string") return respuesta.message.content;
+            try {
+                return JSON.stringify(respuesta, null, 2);
+            } catch {
+                return "Respuesta inesperada.";
+            }
+        }
+
+        async function consultarModelos() {
+            const pregunta = document.getElementById("pregunta").value.trim();
+            const modelos = Array.from(document.getElementById("modelos").selectedOptions).map(opt => opt.value);
+            const contenedor = document.getElementById("resultados");
+            contenedor.innerHTML = "";
+
+            if (!pregunta || modelos.length === 0) {
+                alert("Escribí una consulta y seleccioná al menos un modelo.");
+                return;
+            }
+
+            for (const modelo of modelos) {
+                const div = document.createElement("div");
+                div.className = "respuesta";
+                div.innerHTML = `<h3>${modelo}</h3><em>Consultando...</em>`;
+                contenedor.appendChild(div);
+
+                try {
+                    const res = await puter.ai.chat(pregunta, { model: modelo });
+                    const text = limpiarRespuesta(res);
+                    div.innerHTML = `<h3>${modelo}</h3>` + marked.parse(text);
+                } catch (err) {
+                    div.innerHTML = `<h3>${modelo}</h3><span style="color:red;">❌ Error consultando este modelo.</span>`;
+                    console.error(err);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
