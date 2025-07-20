@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: multi-model-comparator
+    name: multi-model-switchboard
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python app.py"
