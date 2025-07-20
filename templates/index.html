@@ -4,8 +4,176 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AI Switchboard – Multi-Modelo</title>
-  <script src="https://js.puter.com/v2/"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://js.puter.com/v2/">
+    const micBtn = document.getElementById("microfono");
+    let reconocimiento;
+
+    if ('webkitSpeechRecognition' in window) {
+      reconocimiento = new webkitSpeechRecognition();
+      reconocimiento.lang = "es-ES";
+      reconocimiento.continuous = false;
+      reconocimiento.interimResults = false;
+
+      reconocimiento.onresult = function(event) {
+        const texto = event.results[0][0].transcript;
+        document.getElementById("pregunta").value = texto;
+      };
+
+      reconocimiento.onerror = function(event) {
+        alert("Error al reconocer voz: " + event.error);
+      };
+    } else {
+      micBtn.disabled = true;
+      micBtn.title = "Reconocimiento de voz no disponible";
+    }
+
+    micBtn?.addEventListener("click", () => {
+      if (reconocimiento) {
+        reconocimiento.start();
+      }
+    });
+
+
+    function exportarHistorial() {
+      const historial = JSON.parse(localStorage.getItem("historialConsultas") || "[]");
+      const contenido = historial.join("\n");
+      const blob = new Blob([contenido], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "historial_ai_switchboard.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+
+    const strings = {
+      es: {
+        comparar: "Comparar Respuestas",
+        placeholder: "Escribí tu consulta...",
+        presetLabel: "🧩 Elegí una tarea rápida:",
+        historial: "🗃️ Historial reciente:",
+        exportar: "📤 Exportar historial (.txt)",
+        modo: "Modo de entrada:",
+        modelos: "Modelos a usar:",
+        idioma: "🌐 Idioma de la interfaz:",
+        voz: "Voz para lectura (opcional):",
+      },
+      en: {
+        comparar: "Compare Answers",
+        placeholder: "Write your query...",
+        presetLabel: "🧩 Choose a quick task:",
+        historial: "🗃️ Recent History:",
+        exportar: "📤 Export history (.txt)",
+        modo: "Input mode:",
+        modelos: "Models to use:",
+        idioma: "🌐 Interface language:",
+        voz: "Voice for reading (optional):",
+      }
+    };
+
+    function cambiarIdioma() {
+      const lang = document.getElementById("ui-lang").value;
+      const t = strings[lang];
+      document.querySelector("button[onclick='consultarModelos()']").textContent = t.comparar;
+      document.getElementById("pregunta").placeholder = t.placeholder;
+      document.querySelector("label[for='presets']").textContent = t.presetLabel;
+      document.querySelector("label[for='modo']").textContent = t.modo;
+      document.querySelector("label[for='modelos']").textContent = t.modelos;
+      document.querySelector("label[for='ui-lang']").textContent = t.idioma;
+      document.querySelector("label[for='tts-voice']").textContent = t.voz;
+      document.querySelector(".section-title + ul + button").textContent = t.exportar;
+      document.querySelector(".section-title + ul").previousElementSibling.textContent = t.historial;
+    }
+
+    document.getElementById("ui-lang").addEventListener("change", cambiarIdioma);
+
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js">
+    const micBtn = document.getElementById("microfono");
+    let reconocimiento;
+
+    if ('webkitSpeechRecognition' in window) {
+      reconocimiento = new webkitSpeechRecognition();
+      reconocimiento.lang = "es-ES";
+      reconocimiento.continuous = false;
+      reconocimiento.interimResults = false;
+
+      reconocimiento.onresult = function(event) {
+        const texto = event.results[0][0].transcript;
+        document.getElementById("pregunta").value = texto;
+      };
+
+      reconocimiento.onerror = function(event) {
+        alert("Error al reconocer voz: " + event.error);
+      };
+    } else {
+      micBtn.disabled = true;
+      micBtn.title = "Reconocimiento de voz no disponible";
+    }
+
+    micBtn?.addEventListener("click", () => {
+      if (reconocimiento) {
+        reconocimiento.start();
+      }
+    });
+
+
+    function exportarHistorial() {
+      const historial = JSON.parse(localStorage.getItem("historialConsultas") || "[]");
+      const contenido = historial.join("\n");
+      const blob = new Blob([contenido], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "historial_ai_switchboard.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+
+    const strings = {
+      es: {
+        comparar: "Comparar Respuestas",
+        placeholder: "Escribí tu consulta...",
+        presetLabel: "🧩 Elegí una tarea rápida:",
+        historial: "🗃️ Historial reciente:",
+        exportar: "📤 Exportar historial (.txt)",
+        modo: "Modo de entrada:",
+        modelos: "Modelos a usar:",
+        idioma: "🌐 Idioma de la interfaz:",
+        voz: "Voz para lectura (opcional):",
+      },
+      en: {
+        comparar: "Compare Answers",
+        placeholder: "Write your query...",
+        presetLabel: "🧩 Choose a quick task:",
+        historial: "🗃️ Recent History:",
+        exportar: "📤 Export history (.txt)",
+        modo: "Input mode:",
+        modelos: "Models to use:",
+        idioma: "🌐 Interface language:",
+        voz: "Voice for reading (optional):",
+      }
+    };
+
+    function cambiarIdioma() {
+      const lang = document.getElementById("ui-lang").value;
+      const t = strings[lang];
+      document.querySelector("button[onclick='consultarModelos()']").textContent = t.comparar;
+      document.getElementById("pregunta").placeholder = t.placeholder;
+      document.querySelector("label[for='presets']").textContent = t.presetLabel;
+      document.querySelector("label[for='modo']").textContent = t.modo;
+      document.querySelector("label[for='modelos']").textContent = t.modelos;
+      document.querySelector("label[for='ui-lang']").textContent = t.idioma;
+      document.querySelector("label[for='tts-voice']").textContent = t.voz;
+      document.querySelector(".section-title + ul + button").textContent = t.exportar;
+      document.querySelector(".section-title + ul").previousElementSibling.textContent = t.historial;
+    }
+
+    document.getElementById("ui-lang").addEventListener("change", cambiarIdioma);
+
+</script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -126,7 +294,10 @@
     </select>
 
 <div id="input-texto">
-      <textarea id="pregunta" rows="4" placeholder="Escribí tu consulta..."></textarea>
+      <div style="display: flex; gap: 10px;">
+<textarea id="pregunta" rows="4" style="flex: 1;" placeholder="Escribí tu consulta..."></textarea>
+<button id="microfono" title="Hablar" style="width: 60px; font-size: 1.2em;">🎤</button>
+</div>
     </div>
     <div id="input-imagen" style="display:none;">
       <input type="file" id="archivo" accept="image/*">
@@ -190,7 +361,14 @@
 
     <button onclick="consultarModelos()">Comparar Respuestas</button>
 
-    <label class="section-title" for="tts-voice">Voz para lectura (opcional):</label>
+    
+    <label class="section-title" for="ui-lang">🌐 Idioma de la interfaz:</label>
+    <select id="ui-lang">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+    </select>
+
+<label class="section-title" for="tts-voice">Voz para lectura (opcional):</label>
     <select id="tts-voice">
       <option value="">(Desactivado)</option>
       <option value="es-ES">Español (España)</option>
@@ -203,6 +381,9 @@
 
     <div class="section-title">🗃️ Historial reciente:</div>
     <ul id="historial" style="list-style: none; padding: 0;"></ul>
+
+    <button onclick="exportarHistorial()" style="margin-top: 10px;">📤 Exportar historial (.txt)</button>
+
 
   </main>
 
@@ -239,6 +420,7 @@
     });
 
     window.onload = () => {
+  cambiarIdioma();
       renderHistorial();
       document.getElementById('presets').value = '';
       if (localStorage.getItem("modoOscuro") === "true") {
@@ -327,6 +509,90 @@ reproducirTTS(text, voice);
         }
       }
     }
-  </script>
+  
+    const micBtn = document.getElementById("microfono");
+    let reconocimiento;
+
+    if ('webkitSpeechRecognition' in window) {
+      reconocimiento = new webkitSpeechRecognition();
+      reconocimiento.lang = "es-ES";
+      reconocimiento.continuous = false;
+      reconocimiento.interimResults = false;
+
+      reconocimiento.onresult = function(event) {
+        const texto = event.results[0][0].transcript;
+        document.getElementById("pregunta").value = texto;
+      };
+
+      reconocimiento.onerror = function(event) {
+        alert("Error al reconocer voz: " + event.error);
+      };
+    } else {
+      micBtn.disabled = true;
+      micBtn.title = "Reconocimiento de voz no disponible";
+    }
+
+    micBtn?.addEventListener("click", () => {
+      if (reconocimiento) {
+        reconocimiento.start();
+      }
+    });
+
+
+    function exportarHistorial() {
+      const historial = JSON.parse(localStorage.getItem("historialConsultas") || "[]");
+      const contenido = historial.join("\n");
+      const blob = new Blob([contenido], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "historial_ai_switchboard.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+
+    const strings = {
+      es: {
+        comparar: "Comparar Respuestas",
+        placeholder: "Escribí tu consulta...",
+        presetLabel: "🧩 Elegí una tarea rápida:",
+        historial: "🗃️ Historial reciente:",
+        exportar: "📤 Exportar historial (.txt)",
+        modo: "Modo de entrada:",
+        modelos: "Modelos a usar:",
+        idioma: "🌐 Idioma de la interfaz:",
+        voz: "Voz para lectura (opcional):",
+      },
+      en: {
+        comparar: "Compare Answers",
+        placeholder: "Write your query...",
+        presetLabel: "🧩 Choose a quick task:",
+        historial: "🗃️ Recent History:",
+        exportar: "📤 Export history (.txt)",
+        modo: "Input mode:",
+        modelos: "Models to use:",
+        idioma: "🌐 Interface language:",
+        voz: "Voice for reading (optional):",
+      }
+    };
+
+    function cambiarIdioma() {
+      const lang = document.getElementById("ui-lang").value;
+      const t = strings[lang];
+      document.querySelector("button[onclick='consultarModelos()']").textContent = t.comparar;
+      document.getElementById("pregunta").placeholder = t.placeholder;
+      document.querySelector("label[for='presets']").textContent = t.presetLabel;
+      document.querySelector("label[for='modo']").textContent = t.modo;
+      document.querySelector("label[for='modelos']").textContent = t.modelos;
+      document.querySelector("label[for='ui-lang']").textContent = t.idioma;
+      document.querySelector("label[for='tts-voice']").textContent = t.voz;
+      document.querySelector(".section-title + ul + button").textContent = t.exportar;
+      document.querySelector(".section-title + ul").previousElementSibling.textContent = t.historial;
+    }
+
+    document.getElementById("ui-lang").addEventListener("change", cambiarIdioma);
+
+</script>
 </body>
 </html>
