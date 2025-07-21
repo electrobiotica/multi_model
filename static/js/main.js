@@ -149,11 +149,6 @@ async function reproducirTTS(texto, voice) {
 }
 
 async function consultarModelos() {
-  if (typeof puter === 'undefined') {
-    console.error("❌ Puter.js no está cargado aún.");
-    alert("La librería Puter.js no fue cargada correctamente.");
-    return;
-  }
   const modo = document.getElementById("modo").value;
   const pregunta = document.getElementById("pregunta").value.trim();
   const archivo = document.getElementById("archivo").files[0];
