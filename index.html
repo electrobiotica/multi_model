@@ -1,75 +1,225 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Multi-Modelo AI – Comparador Inteligente</title>
-    <script src="https://js.puter.com/v2/"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
-        body { font-family: sans-serif; margin: 20px; max-width: 1000px; }
-        textarea, select, button { padding: 10px; margin-top: 10px; width: 100%; font-size: 1em; }
-        .respuesta { margin-top: 20px; padding: 15px; background: #f4f4f4; border-radius: 8px; white-space: pre-wrap; }
-        .respuesta h3 { margin-top: 0; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
-    </style>
-</head>
-<body>
-    <h1>🤖 Multi-Modelo AI – Comparador de Respuestas</h1>
-    <textarea id="pregunta" rows="4" placeholder="Escribí tu consulta..."></textarea>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Switchboard – Multi-Modelo</title>
+  
+  
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0 20px;
+      color: #333;
+    }
+    header {
+      background: #4a90e2;
+      color: white;
+      padding: 1rem 2rem;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    main {
+      max-width: 1100px;
+      margin: 20px auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    select, textarea, input[type="file"], button {
+      width: 100%;
+      font-size: 1rem;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background: #4a90e2;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #357bd8;
+    }
+    .respuesta {
+      background: #f1f3f5;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 20px;
+    }
+    .respuesta h3 {
+      margin-top: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #4a90e2;
+    }
+  
+    body.dark {
+      background-color: #121212;
+      color: #eee;
+    }
+    body.dark main {
+      background: #1e1e1e;
+    }
+    body.dark .card {
+      background: #2a2a2a;
+      color: #eee;
+    }
+    body.dark select, body.dark textarea, body.dark input[type="file"], body.dark button {
+      background: #2a2a2a;
+      color: #eee;
+      border: 1px solid #555;
+    }
+    body.dark button:hover {
+      background: #444;
+    }
 
-    <label for="modelos">Modelos a usar:</label>
-    <select id="modelos" multiple size="6">
+</style>
+</head>
+<script src="https://js.puter.com/v2/"></script>
+<script src="/static/js/main.js"></script>
+<body>
+  <header>
+    <h1>🤖 AI Switchboard – Comparador Multi-Modelo</h1>
+<button id="toggle-dark" style="float:right; background:#333; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">🌙 Modo Oscuro</button>
+  </header>
+  <main>
+    <label for="modo">Modo de entrada:</label>
+    <select id="modo">
+      <option value="texto">Texto</option>
+      <option value="imagen">Imagen (GPT Vision)</option>
+      <option value="ocr">OCR (Extraer texto)</option>
+    </select>
+
+    
+    <label class="section-title" for="presets">🧩 Elegí una tarea rápida:</label>
+    <select id="presets">
+      <option value="">(Sin preset)</option>
+      <option value="Resumí el siguiente texto:">📝 Resumen</option>
+      <option value="Traducí al inglés:">🌐 Traducir al inglés</option>
+      <option value="Explicá este código:">💻 Explicar código</option>
+      <option value="Escribí un correo profesional sobre:">📧 Email formal</option>
+      <option value="Generá ideas creativas para:">💡 Ideas creativas</option>
+    </select>
+
+<div id="input-texto">
+      <div style="display: flex; gap: 10px;">
+<textarea id="pregunta" rows="4" style="flex: 1;" placeholder="Escribí tu consulta..."></textarea>
+<button id="microfono" title="Hablar" style="width: 60px; font-size: 1.2em;">🎤</button>
+</div>
+    </div>
+    <div id="input-imagen" style="display:none;">
+      <input type="file" id="archivo" accept="image/*">
+    </div>
+
+    <label for="modelos" class="section-title">Modelos a usar:</label>
+    <select id="modelos" multiple size="10">
+<optgroup label="🧠 OpenAI">
+  <option value="gpt-4o">gpt-4o</option>
+  <option value="gpt-4">gpt-4</option>
+  <option value="gpt-4-turbo">gpt-4-turbo</option>
+  <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+</optgroup>
+<optgroup label="🧠 Anthropic (Claude)">
+  <option value="openrouter:anthropic/claude-3-haiku">Claude 3 Haiku</option>
+  <option value="openrouter:anthropic/claude-3-sonnet">Claude 3 Sonnet</option>
+  <option value="openrouter:anthropic/claude-3-opus">Claude 3 Opus</option>
+  <option value="openrouter:anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+</optgroup>
+<optgroup label="🧠 Google (Gemini)">
+  <option value="openrouter:google/gemini-1.5-flash">Gemini 1.5 Flash</option>
+  <option value="openrouter:google/gemini-1.5-pro">Gemini 1.5 Pro</option>
+  <option value="openrouter:google/gemini-2.5-pro">Gemini 2.5 Pro</option>
+</optgroup>
+<optgroup label="🧠 Mistral">
+  <option value="openrouter:mistralai/mistral-7b-instruct">Mistral 7B Instruct</option>
+  <option value="openrouter:mistralai/mixtral-8x7b-instruct">Mixtral 8x7B Instruct</option>
+</optgroup>
+<optgroup label="🧠 Meta (LLaMA)">
+  <option value="openrouter:meta-llama/llama-3-8b-instruct">LLaMA 3 8B Instruct</option>
+  <option value="openrouter:meta-llama/llama-3-70b-instruct">LLaMA 3 70B Instruct</option>
+</optgroup>
+<optgroup label="🧠 DeepSeek">
+  <option value="openrouter:deepseek/deepseek-coder">DeepSeek Coder</option>
+  <option value="openrouter:deepseek/deepseek-chat">DeepSeek Chat</option>
+</optgroup>
+<optgroup label="🧠 xAI (Grok)">
+  <option value="openrouter:xai/grok-1">Grok 1</option>
+</optgroup>
+<optgroup label="🧠 Otros">
+  <option value="openrouter:cohere/command-r-plus">Cohere Command R+</option>
+  <option value="openrouter:perplexity/pplx-70b-online">Perplexity 70B Online</option>
+  <option value="openrouter:qwen/qwen-72b-chat">Qwen 72B Chat</option>
+</optgroup>
+<optgroup label="🖼️ Imagen / OCR">
+  <option value="img2txt">OCR – Extraer texto</option>
+</optgroup>
+
+      <optgroup label="🧠 Texto">
         <option value="gpt-4o">OpenAI – GPT-4o</option>
         <option value="openrouter:anthropic/claude-3-sonnet">Claude 3 Sonnet</option>
         <option value="openrouter:google/gemini-2.5-pro">Gemini 2.5 Pro</option>
         <option value="openrouter:deepseek/deepseek-chat">DeepSeek</option>
         <option value="openrouter:xai/grok-1">Grok (xAI)</option>
         <option value="openrouter:mistralai/mistral-7b-instruct">Mistral</option>
+      </optgroup>
+      <optgroup label="🖼️ Imagen / OCR">
+        <option value="img2txt">OCR – Extraer texto</option>
+      </optgroup>
     </select>
 
     <button onclick="consultarModelos()">Comparar Respuestas</button>
 
+    
+    <label class="section-title" for="ui-lang">🌐 Idioma de la interfaz:</label>
+    <select id="ui-lang">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+    </select>
+
+<label class="section-title" for="tts-voice">Voz para lectura (opcional):</label>
+    <select id="tts-voice">
+      <option value="">(Desactivado)</option>
+      <option value="es-ES">Español (España)</option>
+      <option value="es-MX">Español (México)</option>
+      <option value="en-US">Inglés (EE.UU.)</option>
+    </select>
+
+
     <div class="grid" id="resultados"></div>
 
-    <script>
-        function limpiarRespuesta(respuesta) {
-            if (typeof respuesta === "string") return respuesta;
-            if (respuesta?.text && typeof respuesta.text === "string") return respuesta.text;
-            if (respuesta?.message?.content && typeof respuesta.message.content === "string") return respuesta.message.content;
-            try {
-                return JSON.stringify(respuesta, null, 2);
-            } catch {
-                return "Respuesta inesperada.";
-            }
-        }
+    <div class="section-title">🗃️ Historial reciente:</div>
+    <ul id="historial" style="list-style: none; padding: 0;"></ul>
 
-        async function consultarModelos() {
-            const pregunta = document.getElementById("pregunta").value.trim();
-            const modelos = Array.from(document.getElementById("modelos").selectedOptions).map(opt => opt.value);
-            const contenedor = document.getElementById("resultados");
-            contenedor.innerHTML = "";
+    <button onclick="exportarHistorial()" style="margin-top: 10px;">📤 Exportar historial (.txt)</button>
 
-            if (!pregunta || modelos.length === 0) {
-                alert("Escribí una consulta y seleccioná al menos un modelo.");
-                return;
-            }
 
-            for (const modelo of modelos) {
-                const div = document.createElement("div");
-                div.className = "respuesta";
-                div.innerHTML = `<h3>${modelo}</h3><em>Consultando...</em>`;
-                contenedor.appendChild(div);
+  </main>
 
-                try {
-                    const res = await puter.ai.chat(pregunta, { model: modelo });
-                    const text = limpiarRespuesta(res);
-                    div.innerHTML = `<h3>${modelo}</h3>` + marked.parse(text);
-                } catch (err) {
-                    div.innerHTML = `<h3>${modelo}</h3><span style="color:red;">❌ Error consultando este modelo.</span>`;
-                    console.error(err);
-                }
-            }
-        }
-    </script>
 </body>
 </html>
