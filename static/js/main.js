@@ -136,16 +136,19 @@ function limpiarRespuesta(respuesta) {
   }
 }
 
-async function reproducirTTS(texto, voice) {
-  if (!voice) return;
+async function 
+reproducirTTS = async (texto, voice) => {
   try {
-    const blob = await puter.ai.txt2speech(texto, { voice: voice });
+    const vozFinal = voice || "Lupe";  // voz por defecto
+    const blob = await puter.ai.txt2speech(texto, { voice: vozFinal });
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
     audio.play();
   } catch (err) {
     console.error("Error en TTS:", err);
+    alert("❌ Error al reproducir voz. Verificá si el modelo TTS está disponible.");
   }
+}
 }
 
 async function consultarModelos() {
