@@ -1,3 +1,12 @@
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+# Al final del archivo:
 import os
 
 if __name__ == "__main__":
