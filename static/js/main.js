@@ -136,19 +136,25 @@ function limpiarRespuesta(respuesta) {
   }
 }
 
-async function 
-reproducirTTS = async (texto, voice) => {
+const voiceMap = {
+  "es-ES": "Lucia",
+  "es-MX": "Lupe",
+  "en-US": "Joey"
+};
+
+async function reproducirTTS(texto, voice) {
+  const voiceName = voiceMap[voice] || null;
+  if (!voiceName) return;
+
   try {
-    const vozFinal = voice || "Lupe";  // voz por defecto
-    const blob = await puter.ai.txt2speech(texto, { voice: vozFinal });
+    const blob = await puter.ai.txt2speech(texto, { voice: voiceName });
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
     audio.play();
   } catch (err) {
     console.error("Error en TTS:", err);
-    alert("❌ Error al reproducir voz. Verificá si el modelo TTS está disponible.");
+    alert("❌ Error al reproducir voz. Verificá si la voz está disponible.");
   }
-}
 }
 
 async function consultarModelos() {
