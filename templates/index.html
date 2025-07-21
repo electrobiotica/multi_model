@@ -1,12 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Switchboard – Multi-Modelo</title>
-  
-  
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Switchboard – Multi-Modelo</title>
+<style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #f8f9fa;
@@ -104,124 +103,82 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1>🤖 AI Switchboard – Comparador Multi-Modelo</h1>
+<header>
+<h1>🤖 AI Switchboard – Comparador Multi-Modelo</h1>
 <button id="toggle-dark" style="float:right; background:#333; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">🌙 Modo Oscuro</button>
-  </header>
-  <main>
-    <label for="modo">Modo de entrada:</label>
-    <select id="modo">
-      <option value="texto">Texto</option>
-      <option value="imagen">Imagen (GPT Vision)</option>
-      <option value="ocr">OCR (Extraer texto)</option>
-    </select>
-
-    
-    <label class="section-title" for="presets">🧩 Elegí una tarea rápida:</label>
-    <select id="presets">
-      <option value="">(Sin preset)</option>
-      <option value="Resumí el siguiente texto:">📝 Resumen</option>
-      <option value="Traducí al inglés:">🌐 Traducir al inglés</option>
-      <option value="Explicá este código:">💻 Explicar código</option>
-      <option value="Escribí un correo profesional sobre:">📧 Email formal</option>
-      <option value="Generá ideas creativas para:">💡 Ideas creativas</option>
-    </select>
-
+</header>
+<main>
+<label for="modo">Modo de entrada:</label>
+<select id="modo">
+<option value="texto">Texto</option>
+<option value="imagen">Imagen (GPT Vision)</option>
+<option value="ocr">OCR (Extraer texto)</option>
+</select>
+<label class="section-title" for="presets">🧩 Elegí una tarea rápida:</label>
+<select id="presets">
+<option value="">(Sin preset)</option>
+<option value="Resumí el siguiente texto:">📝 Resumen</option>
+<option value="Traducí al inglés:">🌐 Traducir al inglés</option>
+<option value="Explicá este código:">💻 Explicar código</option>
+<option value="Escribí un correo profesional sobre:">📧 Email formal</option>
+<option value="Generá ideas creativas para:">💡 Ideas creativas</option>
+</select>
 <div id="input-texto">
-      <div style="display: flex; gap: 10px;">
-<textarea id="pregunta" rows="4" style="flex: 1;" placeholder="Escribí tu consulta..."></textarea>
-<button id="microfono" title="Hablar" style="width: 60px; font-size: 1.2em;">🎤</button>
+<div style="display: flex; gap: 10px;">
+<textarea id="pregunta" placeholder="Escribí tu consulta..." rows="4" style="flex: 1;"></textarea>
+<button id="microfono" style="width: 60px; font-size: 1.2em;" title="Hablar">🎤</button>
 </div>
-    </div>
-    <div id="input-imagen" style="display:none;">
-      <input type="file" id="archivo" accept="image/*">
-    </div>
+</div>
+<div id="input-imagen" style="display:none;">
+<input accept="image/*" id="archivo" type="file"/>
+</div>
 
-    <label for="modelos" class="section-title">Modelos a usar:</label>
-    <select id="modelos" multiple size="10">
-<optgroup label="🧠 OpenAI">
-  <option value="gpt-4o">gpt-4o</option>
-  <option value="gpt-4">gpt-4</option>
-  <option value="gpt-4-turbo">gpt-4-turbo</option>
-  <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-</optgroup>
-<optgroup label="🧠 Anthropic (Claude)">
-  <option value="openrouter:anthropic/claude-3-haiku">Claude 3 Haiku</option>
-  <option value="openrouter:anthropic/claude-3-sonnet">Claude 3 Sonnet</option>
-  <option value="openrouter:anthropic/claude-3-opus">Claude 3 Opus</option>
-  <option value="openrouter:anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
-</optgroup>
-<optgroup label="🧠 Google (Gemini)">
-  <option value="openrouter:google/gemini-1.5-flash">Gemini 1.5 Flash</option>
-  <option value="openrouter:google/gemini-1.5-pro">Gemini 1.5 Pro</option>
-  <option value="openrouter:google/gemini-2.5-pro">Gemini 2.5 Pro</option>
-</optgroup>
-<optgroup label="🧠 Mistral">
-  <option value="openrouter:mistralai/mistral-7b-instruct">Mistral 7B Instruct</option>
-  <option value="openrouter:mistralai/mixtral-8x7b-instruct">Mixtral 8x7B Instruct</option>
-</optgroup>
-<optgroup label="🧠 Meta (LLaMA)">
-  <option value="openrouter:meta-llama/llama-3-8b-instruct">LLaMA 3 8B Instruct</option>
-  <option value="openrouter:meta-llama/llama-3-70b-instruct">LLaMA 3 70B Instruct</option>
-</optgroup>
-<optgroup label="🧠 DeepSeek">
-  <option value="openrouter:deepseek/deepseek-coder">DeepSeek Coder</option>
-  <option value="openrouter:deepseek/deepseek-chat">DeepSeek Chat</option>
-</optgroup>
-<optgroup label="🧠 xAI (Grok)">
-  <option value="openrouter:xai/grok-1">Grok 1</option>
-</optgroup>
-<optgroup label="🧠 Otros">
-  <option value="openrouter:cohere/command-r-plus">Cohere Command R+</option>
-  <option value="openrouter:perplexity/pplx-70b-online">Perplexity 70B Online</option>
-  <option value="openrouter:qwen/qwen-72b-chat">Qwen 72B Chat</option>
-</optgroup>
-<optgroup label="🖼️ Imagen / OCR">
-  <option value="img2txt">OCR – Extraer texto</option>
-</optgroup>
+<label class="section-title" for="modelos">🧠 Modelos compatibles:</label>
+<select id="modelos" multiple="" size="12">
+<option value="gpt-4o">gpt-4o</option>
+<option value="gpt-4o-mini">gpt-4o-mini</option>
+<option value="o1">o1</option>
+<option value="o1-mini">o1-mini</option>
+<option value="o1-pro">o1-pro</option>
+<option value="o3">o3</option>
+<option value="o3-mini">o3-mini</option>
+<option value="o4-mini">o4-mini</option>
+<option value="gpt-4.1">gpt-4.1</option>
+<option value="gpt-4.1-mini">gpt-4.1-mini</option>
+<option value="gpt-4.1-nano">gpt-4.1-nano</option>
+<option value="gpt-4.5-preview">gpt-4.5-preview</option>
+<option value="claude-opus-4">claude-opus-4</option>
+<option value="claude-sonnet-4">claude-sonnet-4</option>
+<option value="claude-3-5-sonnet-latest">claude-3-5-sonnet-latest</option>
+<option value="cartesia/sonic">cartesia/sonic</option>
+<option value="mistralai/Mistral-7B-Instruct-v0.3">mistralai/Mistral-7B-Instruct-v0.3</option>
+<option value="Qwen/Qwen2.5-7B-Instruct-Turbo">Qwen/Qwen2.5-7B-Instruct-Turbo</option>
+<option value="deepseek-ai/DeepSeek-V3">deepseek-ai/DeepSeek-V3</option>
+<option value="meta-llama/Meta-Llama-3.1-70B-Instruct">meta-llama/Meta-Llama-3.1-70B-Instruct</option>
+<option value="openai/gpt-3.5-turbo">openai/gpt-3.5-turbo</option>
+<option value="openai/gpt-4-turbo">openai/gpt-4-turbo</option>
+<option value="openai/gpt-4o">openai/gpt-4o</option>
+</select>
 
-      <optgroup label="🧠 Texto">
-        <option value="gpt-4o">OpenAI – GPT-4o</option>
-        <option value="openrouter:anthropic/claude-3-sonnet">Claude 3 Sonnet</option>
-        <option value="openrouter:google/gemini-2.5-pro">Gemini 2.5 Pro</option>
-        <option value="openrouter:deepseek/deepseek-chat">DeepSeek</option>
-        <option value="openrouter:xai/grok-1">Grok (xAI)</option>
-        <option value="openrouter:mistralai/mistral-7b-instruct">Mistral</option>
-      </optgroup>
-      <optgroup label="🖼️ Imagen / OCR">
-        <option value="img2txt">OCR – Extraer texto</option>
-      </optgroup>
-    </select>
 
-    <button onclick="consultarModelos()">Comparar Respuestas</button>
-
-    
-    <label class="section-title" for="ui-lang">🌐 Idioma de la interfaz:</label>
-    <select id="ui-lang">
-      <option value="es">Español</option>
-      <option value="en">English</option>
-    </select>
-
+<button onclick="consultarModelos()">Comparar Respuestas</button>
+<label class="section-title" for="ui-lang">🌐 Idioma de la interfaz:</label>
+<select id="ui-lang">
+<option value="es">Español</option>
+<option value="en">English</option>
+</select>
 <label class="section-title" for="tts-voice">Voz para lectura (opcional):</label>
-    <select id="tts-voice">
-      <option value="">(Desactivado)</option>
-      <option value="es-ES">Español (España)</option>
-      <option value="es-MX">Español (México)</option>
-      <option value="en-US">Inglés (EE.UU.)</option>
-    </select>
-
-
-    <div class="grid" id="resultados"></div>
-
-    <div class="section-title">🗃️ Historial reciente:</div>
-    <ul id="historial" style="list-style: none; padding: 0;"></ul>
-
-    <button onclick="exportarHistorial()" style="margin-top: 10px;">📤 Exportar historial (.txt)</button>
-
-
-  </main>
-
-  
+<select id="tts-voice">
+<option value="">(Desactivado)</option>
+<option value="es-ES">Español (España)</option>
+<option value="es-MX">Español (México)</option>
+<option value="en-US">Inglés (EE.UU.)</option>
+</select>
+<div class="grid" id="resultados"></div>
+<div class="section-title">🗃️ Historial reciente:</div>
+<ul id="historial" style="list-style: none; padding: 0;"></ul>
+<button onclick="exportarHistorial()" style="margin-top: 10px;">📤 Exportar historial (.txt)</button>
+</main>
 <script src="/static/js/main.js"></script>
 </body>
 </html>
