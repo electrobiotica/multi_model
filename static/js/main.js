@@ -1,4 +1,3 @@
-
 window.addEventListener("DOMContentLoaded", () => {
   const micBtn = document.getElementById("microfono");
   let reconocimiento;
@@ -172,6 +171,8 @@ async function consultarModelos() {
 
   if (modo === "texto") guardarHistorial(pregunta);
 
+  const markdownParse = typeof marked !== "undefined" ? marked.parse : (txt) => txt;
+
   for (const modelo of modelos) {
     const div = document.createElement("div");
     div.className = "card";
@@ -189,7 +190,7 @@ async function consultarModelos() {
       }
 
       const text = limpiarRespuesta(res);
-      div.innerHTML = `<h3>${modelo}</h3>` + marked.parse(text);
+      div.innerHTML = `<h3>${modelo}</h3>` + markdownParse(text);
       const voice = document.getElementById("tts-voice").value;
       reproducirTTS(text, voice);
     } catch (err) {
