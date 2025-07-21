@@ -1,4 +1,4 @@
-
+import os
 from flask import Flask, render_template
 
 app = Flask(__name__, static_url_path='/static')
@@ -8,4 +8,5 @@ def index():
     return render_template("index.html")
 
 if __name__ == "__main__":
-    app.run(debug=True, host="127.0.0.1", port=5050)
+    port = int(os.environ.get("PORT", 10000))  # para local usa 10000
+    app.run(host="0.0.0.0", port=port)
